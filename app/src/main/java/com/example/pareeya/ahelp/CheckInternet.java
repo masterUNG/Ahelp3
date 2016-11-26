@@ -12,6 +12,7 @@ import android.util.Log;
 
 public class CheckInternet extends AsyncTask<Void, Void, String>{
 
+
     //Explicit
     private Context context;
     private ConnectivityManager connectivityManager;
