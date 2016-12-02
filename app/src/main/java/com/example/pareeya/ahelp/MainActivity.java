@@ -61,12 +61,12 @@ public class MainActivity extends AppCompatActivity {
             CheckInternet checkInternet = new CheckInternet(MainActivity.this);
             checkInternet.execute();
             if (Boolean.parseBoolean(checkInternet.get())) {
-                Toast.makeText(MainActivity.this, "Internet OK", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, " ", Toast.LENGTH_SHORT);
 
 
 
             } else {
-                Toast.makeText(MainActivity.this, "Cannot Connected Internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "กรุณาตรวจสอบ Internet", Toast.LENGTH_SHORT).show();
                 finish();
             }
 

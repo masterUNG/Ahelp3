@@ -24,5 +24,5 @@
         android:textSize="@dimen/h2"
         android:layout_marginTop="10dp"
         android:textStyle="normal|italic"
-        android:textColor="#008b20" />
+        android:textColor="#e0e0fffe" />
 </LinearLayout>

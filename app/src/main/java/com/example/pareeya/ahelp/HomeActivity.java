@@ -70,7 +70,7 @@ public class HomeActivity extends AppCompatActivity {
             if (Boolean.parseBoolean(checkInternet.get())) {
                 startActivity(new Intent(HomeActivity.this, SettingActivity.class));
             } else {
-                Toast.makeText(HomeActivity.this, "Cannot Setting No Internet",
+                Toast.makeText(HomeActivity.this, "กรุณาตรวจสอบ Internet",
                         Toast.LENGTH_SHORT).show();
             }
 

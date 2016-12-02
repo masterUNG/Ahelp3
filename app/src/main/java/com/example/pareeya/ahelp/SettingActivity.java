@@ -144,13 +144,13 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         final EditText editText = new EditText(SettingActivity.this);
         builder.setView(editText);
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
         });
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("ตกลง", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -165,7 +165,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 } else {
                     //Password False
                     Toast.makeText(SettingActivity.this,
-                            "Password ผิด กรอกใหม่",
+                            "Password ผิด กรุณากรอกใหม่",
                             Toast.LENGTH_SHORT).show();
                     dialogInterface.dismiss();
                 }   // if
