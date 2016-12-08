@@ -78,6 +78,7 @@ public class HomeActivity extends AppCompatActivity {
             cursor.close();
 
 
+
             FindIDuser findIDuser = new FindIDuser(HomeActivity.this,
                     nameString, truePasswordString);
             findIDuser.execute();
