@@ -157,7 +157,7 @@ public class HomeActivity extends AppCompatActivity {
                 (int) System.currentTimeMillis(), intent,0);
         Uri uri = RingtoneManager.getDefaultUri(Notification.DEFAULT_SOUND);
         Notification.Builder builder = new Notification.Builder(HomeActivity.this);
-        builder.setTicker("Help Friend");
+        builder.setTicker("Ahelp");
         builder.setContentTitle("Title");
         builder.setContentText("Detail");
         builder.setSmallIcon(R.drawable.alert);
@@ -207,7 +207,7 @@ public class HomeActivity extends AppCompatActivity {
         final EditText editText = new EditText(HomeActivity.this);
         builder.setView(editText);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("ตกลง", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 userPasswordString = editText.getText().toString().trim();
@@ -285,9 +285,9 @@ public class HomeActivity extends AppCompatActivity {
             editAhelp.execute();
 
             if (Boolean.parseBoolean(editAhelp.get())) {
-                Toast.makeText(HomeActivity.this, "Call Friend OK", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, "ส่งข้อความเรียบร้อยแล้ว", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(HomeActivity.this, "Cannot Call Friend", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, "การส่งข้อความไม่สำเร็จ", Toast.LENGTH_SHORT).show();
             }
 
         } catch (Exception e) {
