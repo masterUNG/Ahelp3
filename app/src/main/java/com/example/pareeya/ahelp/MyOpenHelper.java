@@ -22,7 +22,8 @@ public class MyOpenHelper extends SQLiteOpenHelper{
     private static final String create_phone_table = "create table phoneTABLE(" +
             "_id integer primary key," +
             "idCall text, " +
-            "MyPhone text);";
+            "MyPhone text," +
+            "Action text);";
 
     private String firstString = "insert into phoneTABLE VALUES(null, '', '');";
 
@@ -39,10 +40,10 @@ public class MyOpenHelper extends SQLiteOpenHelper{
         sqLiteDatabase.execSQL(create_user_table);
         sqLiteDatabase.execSQL(create_phone_table);
 
-        for (int i=0; i<5; i+=1) {
-            sqLiteDatabase.execSQL(firstString);
-
-        }
+//        for (int i=0; i<5; i+=1) {
+//            sqLiteDatabase.execSQL(firstString);
+//
+//        }
 
     }
 

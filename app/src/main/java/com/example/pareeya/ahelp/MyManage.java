@@ -20,12 +20,27 @@ public class MyManage {
     public static final String column_Password = "Password";
     public static final String column_idCall = "idCall";
 
+    public static final String table_phone = "phoneTABLE";
+    public static final String column_Action = "Action";
+
     public MyManage(Context context) {
 
         myOpenHelper = new MyOpenHelper(context);
         sqLiteDatabase = myOpenHelper.getWritableDatabase();
 
     }   // Constructor
+
+    //add Phone to SQLite
+    public long addPhoneToSQLite(String strIdCall,
+                                 String strMyPhone,
+                                 String strAction) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(column_idCall, strIdCall);
+        contentValues.put(column_MyPhone, strMyPhone);
+        contentValues.put(column_Action, strAction);
+
+        return sqLiteDatabase.insert(table_phone, null, contentValues);
+    }
 
     //add value to SQLite
     public long addValueToSQLite(String strName,

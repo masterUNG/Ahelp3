@@ -3,6 +3,7 @@ package com.example.pareeya.ahelp;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,8 @@ import com.squareup.okhttp.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
 
     //Explicit
@@ -40,14 +43,24 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private ListView listView;
     private Button button;
     private String urlJSON = "http://swiftcodingthai.com/fai/get_User_kanyarat.php";
-    private String[] nameStrings, phoneStrings, passwordStrings;
-    private String nameChooseString, phoneChooseString, passwordChooseString;
+    private String[] nameStrings, phoneStrings, passwordStrings, idStrings;
+    private String nameChooseString, phoneChooseString, passwordChooseString, radioButtonChooseString,
+            idCallString;
+    private ArrayList<String> idCallStringsArrayList,myPhoneStringArrayList, actionStringArrayList;
+    private int indexRadioChoose = 0;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+
+        //setup
+        idCallStringsArrayList = new ArrayList<String>();
+        myPhoneStringArrayList = new ArrayList<String>();
+
+
 
         //Bind Widget
         bindWidget();
@@ -68,8 +81,42 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         deletePhone4ImageView.setOnClickListener(SettingActivity.this);
         deletePhone5ImageView.setOnClickListener(SettingActivity.this);
 
+        //RadioGroup Controller
+        radioController();
+
+
 
     }//Main Method
+
+    private void radioController() {
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                switch (checkedId) {
+
+                    case R.id.mradioButton6:
+                        indexRadioChoose = 0;
+                        break;
+                    case R.id.mradioButton7:
+                        indexRadioChoose = 1;
+                        break;
+                    case R.id.mradioButton8:
+                        indexRadioChoose = 2;
+                        break;
+                    case R.id.mradioButton9:
+                        indexRadioChoose = 3;
+                        break;
+                    case R.id.mradioButton10:
+                        indexRadioChoose = 4;
+                        break;
+
+
+                } //switch
+            }
+        });
+    }
 
 
     @Override
@@ -79,53 +126,99 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
         switch (view.getId()) {
 
+            //ปุ่มเพิ่ม
+
             case R.id.imageView6:
 
                 confirmPassword(phone1TextView, nameChooseString,
-                        phoneChooseString, passwordChooseString);
+                        phoneChooseString, passwordChooseString,idCallString);
 
                 break;
             case R.id.imageView7:
 
                 confirmPassword(phone2TextView, nameChooseString,
-                        phoneChooseString, passwordChooseString);
+                        phoneChooseString, passwordChooseString,idCallString);
 
                 break;
             case R.id.imageView8:
 
                 confirmPassword(phone3TextView, nameChooseString,
-                        phoneChooseString, passwordChooseString);
+                        phoneChooseString, passwordChooseString,idCallString);
 
                 break;
             case R.id.imageView9:
 
                 confirmPassword(phone4TextView, nameChooseString,
-                        phoneChooseString, passwordChooseString);
+                        phoneChooseString, passwordChooseString,idCallString);
 
                 break;
             case R.id.imageView10:
 
                 confirmPassword(phone5TextView, nameChooseString,
-                        phoneChooseString, passwordChooseString);
+                        phoneChooseString, passwordChooseString,idCallString);
 
                 break;
+
+            //ปุ่มลบ
+
             case R.id.imageView11:
-                phone1TextView.setText("");
+
+                try {
+                    phone1TextView.setText("");
+                    idCallStringsArrayList.remove(0);
+                    myPhoneStringArrayList.remove(0);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
+
             case R.id.imageView12:
-                phone2TextView.setText("");
+                try {
+                    phone2TextView.setText("");
+                    idCallStringsArrayList.remove(1);
+                    myPhoneStringArrayList.remove(1);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
+
             case R.id.imageView13:
-                phone3TextView.setText("");
+                try {
+                    phone3TextView.setText("");
+                    idCallStringsArrayList.remove(2);
+                    myPhoneStringArrayList.remove(2);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
+
             case R.id.imageView14:
-                phone4TextView.setText("");
+                try {
+                    phone4TextView.setText("");
+                    idCallStringsArrayList.remove(3);
+                    myPhoneStringArrayList.remove(3);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
+
             case R.id.imageView15:
-                phone5TextView.setText("");
+                try {
+                    phone5TextView.setText("");
+                    idCallStringsArrayList.remove(4);
+                    myPhoneStringArrayList.remove(4);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
 
         }   // switch
+
 
 
     }   // onClick
@@ -133,7 +226,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private void confirmPassword(final TextView phoneTextView,
                                  final String nameChooseString,
                                  final String phoneChooseString,
-                                 final String passwordChooseString) {
+                                 final String passwordChooseString,
+                                 final String idCallString) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
         builder.setCancelable(false);
@@ -160,6 +254,11 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
                     //Password True
                     phoneTextView.setText(nameChooseString);
+
+                    idCallStringsArrayList.add(idCallString);
+                    myPhoneStringArrayList.add(phoneChooseString);
+
+
                     dialogInterface.dismiss();
 
                 } else {
@@ -218,6 +317,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 nameStrings = new String[jsonArray.length()];
                 phoneStrings = new String[jsonArray.length()];
                 passwordStrings = new String[jsonArray.length()];
+                idStrings = new String[jsonArray.length()];
 
                 for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -226,6 +326,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                     nameStrings[i] = jsonObject.getString("Name");
                     phoneStrings[i] = jsonObject.getString("Phone");
                     passwordStrings[i] = jsonObject.getString("Password");
+                    idStrings[i] = jsonObject.getString("id");
+
 
                 }   // for
 
@@ -243,6 +345,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                         nameChooseString = nameStrings[i];
                         phoneChooseString = phoneStrings[i];
                         passwordChooseString = passwordStrings[i];
+                        idCallString = idStrings[i];
+
 
                     }   // onItmeClick
                 });
@@ -279,11 +383,11 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         deletePhone5ImageView = (ImageView) findViewById(R.id.imageView15);
 
 
-        phone1RadioButton = (RadioButton) findViewById(R.id.radioButton6);
-        phone2RadioButton = (RadioButton) findViewById(R.id.radioButton7);
-        phone3RadioButton = (RadioButton) findViewById(R.id.radioButton8);
-        phone4RadioButton = (RadioButton) findViewById(R.id.radioButton9);
-        phone5RadioButton = (RadioButton) findViewById(R.id.radioButton10);
+        phone1RadioButton = (RadioButton) findViewById(R.id.mradioButton6);
+        phone2RadioButton = (RadioButton) findViewById(R.id.mradioButton7);
+        phone3RadioButton = (RadioButton) findViewById(R.id.mradioButton8);
+        phone4RadioButton = (RadioButton) findViewById(R.id.mradioButton9);
+        phone5RadioButton = (RadioButton) findViewById(R.id.mradioButton10);
 
         listView = (ListView) findViewById(R.id.livFriend);
         radioGroup = (RadioGroup) findViewById(R.id.ragPhone);
@@ -294,5 +398,102 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     public void clickSetting(View view) {
         //startActivity(new Intent(SettingActivity.this,HomeActivity.class));
 
+        Log.d("8decV1", "กดยืนยัน");
+
+        if (checkAddPhone()) {
+            MyAlert myAlert = new MyAlert();
+            myAlert.myDialog(SettingActivity.this,"ยังไม่ได้เลือกเบอร์โทรศัพท์",
+                    "กรุณาเลือกเบอร์โทรศัพท์");
+        } else if (checkRadio()) {
+            MyAlert myAlert = new MyAlert();
+            myAlert.myDialog(SettingActivity.this,"ยังไม่ได้เลือกเบอร์โทรศัพท์โทรออก",
+                    "กรุณาเลือกเบอร์โทรศัพท์โทรออก");
+        } else {
+            addPhoneToSQLite();
+
+        }
+
     }//clickSetting
+
+
+    private void addPhoneToSQLite() {
+
+        Log.d("8decV1", "Leangth of arryList ==>" + idCallStringsArrayList.size());
+        Log.d("8decV1", "radioChoose==>" + indexRadioChoose);
+
+
+        try {
+            actionStringArrayList = new ArrayList<String>();
+
+            for (int i = 0; i < idCallStringsArrayList.size(); i++) {
+
+                if (i == indexRadioChoose) {
+                    actionStringArrayList.add("1");
+                } else {
+                    actionStringArrayList.add("0");
+                }
+
+            }//for
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Log.d("8decV1", "actionArrayList==>" + actionStringArrayList);
+        Log.d("8DecV1", "idCallArrayList ==>" + idCallStringsArrayList);
+        Log.d("8DecV1", "myPhoneArrayList ==>" + myPhoneStringArrayList);
+
+        SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(MyOpenHelper.database_name,
+                MODE_PRIVATE, null);
+        sqLiteDatabase.delete(MyManage.table_phone, null, null);
+
+        MyManage myManage = new MyManage(SettingActivity.this);
+        for (int i=0;i<idCallStringsArrayList.size();i++) {
+
+            myManage.addPhoneToSQLite(idCallStringsArrayList.get(i),
+                    myPhoneStringArrayList.get(i),
+                    actionStringArrayList.get(i));
+
+        }//for
+
+        finish();
+
+
+    }//addPhone
+
+    private boolean checkRadio() {
+
+        boolean result = true; //noncheck
+        if (phone1RadioButton.isChecked()||
+                phone2RadioButton.isChecked()||
+                phone3RadioButton.isChecked()||
+                phone4RadioButton.isChecked()||
+                phone5RadioButton.isChecked()) {
+            result = false;
+        }
+        Log.d("8decV1", "phone1 ==>" + phone1RadioButton.isChecked());
+        Log.d("8decV1", "phone1 ==>" + phone2RadioButton.isChecked());
+        Log.d("8decV1", "phone1 ==>" + phone3RadioButton.isChecked());
+        Log.d("8decV1", "phone1 ==>" + phone4RadioButton.isChecked());
+        Log.d("8decV1", "phone1 ==>" + phone5RadioButton.isChecked());
+        Log.d("8decV1", "radioButtonChoose==>" + radioButtonChooseString);
+        Log.d("8decV1", "result checkRadio==>" + result);
+
+        return result;
+    }
+
+    private boolean checkAddPhone() {
+
+        boolean result = false;
+        if (phone1TextView.getText().toString().equals("") &&
+                phone2TextView.getText().toString().equals("") &&
+                phone3TextView.getText().toString().equals("") &&
+                phone4TextView.getText().toString().equals("") &&
+                phone5TextView.getText().toString().equals("")) {
+
+            result = true;
+        }
+        return result;
+    }
 }//MAIN Class
