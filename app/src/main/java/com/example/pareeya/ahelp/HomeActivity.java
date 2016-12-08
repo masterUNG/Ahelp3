@@ -2,12 +2,17 @@ package com.example.pareeya.ahelp;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +36,7 @@ public class HomeActivity extends AppCompatActivity {
     private ImageView img;
     private String truePasswordString, userPasswordString,
             idUserString, nameString, idCallString;
+    private boolean statusABoolean = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +115,19 @@ public class HomeActivity extends AppCompatActivity {
             String strJSON = synAhelp.get();
             Log.d("8decV3", "JSON ==> " + strJSON);
 
+            JSONArray jsonArray = new JSONArray(strJSON);
+            JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+            String strAHlep = jsonObject.getString("Ahelp");
+
+            if (!strAHlep.equals("")) {
+
+                if (Integer.parseInt(strAHlep)!=0) {
+                    myNotification();
+                }//if2
+            }//if1
+
+
         } catch (Exception e) {
             Log.d("8decV3", "e myLoop ==> " + e.toString());
         }
@@ -119,12 +138,40 @@ public class HomeActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                myLoop();
+                if (statusABoolean) {
+                    myLoop();
+                }
             }
         }, 1000);
 
 
     }   // myLoop
+
+    private void myNotification() {
+
+        statusABoolean = false;
+
+        Log.d("8decV4", "Noti OK");
+        Intent intent = new Intent(HomeActivity.this, ShowNotification.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(HomeActivity.this,
+                (int) System.currentTimeMillis(), intent,0);
+        Uri uri = RingtoneManager.getDefaultUri(Notification.DEFAULT_SOUND);
+        Notification.Builder builder = new Notification.Builder(HomeActivity.this);
+        builder.setTicker("Help Friend");
+        builder.setContentTitle("Title");
+        builder.setContentText("Detail");
+        builder.setSmallIcon(R.drawable.alert);
+        builder.setSound(uri);
+        builder.setContentIntent(pendingIntent);
+
+        Notification notification = builder.build();
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notificationManager.notify(0, notification);
+
+
+    }//noti
 
     private void imgController() {
 
@@ -154,8 +201,8 @@ public class HomeActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.alert);
-        builder.setTitle("Type Password");
-        builder.setMessage("Please Type Your Password");
+        builder.setTitle("ยืนยันรหัสผ่าน");
+        builder.setMessage("กรุณากรอกรหัสผ่านของคุณ");
 
         final EditText editText = new EditText(HomeActivity.this);
         builder.setView(editText);
@@ -180,8 +227,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private void passwordFalse() {
         MyAlert myAlert = new MyAlert();
-        myAlert.myDialog(HomeActivity.this, "Password False",
-                "Please Try again Password False");
+        myAlert.myDialog(HomeActivity.this, "รหัสผ่านผิด",
+                "กรุณากรอกรหัสผ่านใหม่");
     }
 
     private void callFriend() {
