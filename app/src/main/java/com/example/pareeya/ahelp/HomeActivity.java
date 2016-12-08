@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -54,8 +55,75 @@ public class HomeActivity extends AppCompatActivity {
         //Img Controller
         imgController();
 
+        //Find Id user
+        findIDuser();
+
+        //My Loop
+        myLoop();
+
 
     }   // Main Method
+
+    private void findIDuser() {
+        //Find idUser
+        try {
+
+            SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(MyOpenHelper.database_name,
+                    MODE_PRIVATE, null);
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM userTABLE", null);
+            cursor.moveToFirst();
+            nameString = cursor.getString(cursor.getColumnIndex(MyManage.column_Name));
+            truePasswordString = cursor.getString(cursor.getColumnIndex(MyManage.column_Password));
+            Log.d("8decV3", "truePass ==> " + truePasswordString);
+            cursor.close();
+
+
+            FindIDuser findIDuser = new FindIDuser(HomeActivity.this,
+                    nameString, truePasswordString);
+            findIDuser.execute();
+            String strJSON = findIDuser.get();
+            Log.d("8decV3", "JSoN ==> " + strJSON);
+
+            JSONArray jsonArray = new JSONArray(strJSON);
+            JSONObject jsonObject = jsonArray.getJSONObject(0);
+            idUserString = jsonObject.getString("id");
+
+            Log.d("8decV3", "idUser ==> " + idUserString);
+
+//            //Find idCall
+//            findIDcall();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }   // try
+    }
+
+    private void myLoop() {
+
+        //My To do
+        try {
+
+            SynAhelp synAhelp = new SynAhelp(HomeActivity.this, idUserString);
+            synAhelp.execute();
+            String strJSON = synAhelp.get();
+            Log.d("8decV3", "JSON ==> " + strJSON);
+
+        } catch (Exception e) {
+            Log.d("8decV3", "e myLoop ==> " + e.toString());
+        }
+
+
+        //Delay
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                myLoop();
+            }
+        }, 1000);
+
+
+    }   // myLoop
 
     private void imgController() {
 
