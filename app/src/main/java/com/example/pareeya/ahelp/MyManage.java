@@ -14,7 +14,7 @@ public class MyManage {
     private SQLiteDatabase sqLiteDatabase;
 
     public static final String table_name = "userTABLE";
-    public static final String column_id = "id";
+    public static final String column_id = "_id";
     public static final String column_Name = "Name";
     public static final String column_MyPhone = "MyPhone";
     public static final String column_Password = "Password";
