@@ -158,8 +158,8 @@ public class HomeActivity extends AppCompatActivity {
         Uri uri = RingtoneManager.getDefaultUri(Notification.DEFAULT_SOUND);
         Notification.Builder builder = new Notification.Builder(HomeActivity.this);
         builder.setTicker("Ahelp");
-        builder.setContentTitle("Title");
-        builder.setContentText("Detail");
+        builder.setContentTitle("ข้อความจาก");
+        builder.setContentText("เกิดเหตุฉุกเฉินกับ"+"กรุณามาช่วยเหลือที่ตำแหน่ง");
         builder.setSmallIcon(R.drawable.alert);
         builder.setSound(uri);
         builder.setContentIntent(pendingIntent);
