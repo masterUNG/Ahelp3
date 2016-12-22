@@ -3,6 +3,7 @@ package com.example.pareeya.ahelp;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -46,9 +47,10 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private String[] nameStrings, phoneStrings, passwordStrings, idStrings;
     private String nameChooseString, phoneChooseString, passwordChooseString, radioButtonChooseString,
             idCallString;
-    private ArrayList<String> idCallStringsArrayList,myPhoneStringArrayList, actionStringArrayList;
+    private ArrayList<String> idCallStringsArrayList, myPhoneStringArrayList, actionStringArrayList;
     private int indexRadioChoose = 0;
 
+    private TextView[] friendTextViews;
 
 
     @Override
@@ -60,14 +62,16 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         idCallStringsArrayList = new ArrayList<String>();
         myPhoneStringArrayList = new ArrayList<String>();
 
-
-
         //Bind Widget
         bindWidget();
 
-        //Create ListView
+        //Create ListView Friend for Choose
         SynUser synUser = new SynUser(SettingActivity.this);
         synUser.execute(urlJSON);
+
+        //Create ListView Show Friend
+        showListFriend();
+
 
         //Image Controller
         addPhone1ImageView.setOnClickListener(SettingActivity.this);
@@ -85,8 +89,57 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         radioController();
 
 
-
     }//Main Method
+
+    private void showListFriend() {
+
+        try {
+
+            friendTextViews = new TextView[5];
+            friendTextViews[0] = phone1TextView;
+            friendTextViews[1] = phone2TextView;
+            friendTextViews[2] = phone3TextView;
+            friendTextViews[3] = phone4TextView;
+            friendTextViews[4] = phone5TextView;
+
+            SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(MyOpenHelper.database_name,
+                    MODE_PRIVATE, null);
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM phoneTABLE", null);
+
+            Log.d("22decV1", "cursor.getCount ==> " + cursor.getCount());
+            if (cursor != null) {
+
+                cursor.moveToFirst();
+                for (int i = 0; i < cursor.getCount(); i++) {
+
+                    try {
+
+                        SynAhelp synAhelp = new SynAhelp(SettingActivity.this,
+                                cursor.getString(1));
+                        synAhelp.execute();
+                        String s = synAhelp.get();
+                        Log.d("22decV1", "JSON (" + i + ") ==> " + s);
+
+                        JSONArray jsonArray = new JSONArray(s);
+                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+                        String strName = jsonObject.getString("Name");
+
+
+                        friendTextViews[i].setText(strName);
+
+                    } catch (Exception e) {
+                        Log.d("22decV1", "e Thread ==> " + e.toString());
+                    }
+
+                    cursor.moveToNext();
+                }   //for
+            }   // if
+
+        } catch (Exception e) {
+            Log.d("22decV1", "e ==> " + e.toString());
+        }
+
+    }   // showListFriend
 
     private void radioController() {
 
@@ -131,31 +184,31 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.imageView6:
 
                 confirmPassword(phone1TextView, nameChooseString,
-                        phoneChooseString, passwordChooseString,idCallString);
+                        phoneChooseString, passwordChooseString, idCallString);
 
                 break;
             case R.id.imageView7:
 
                 confirmPassword(phone2TextView, nameChooseString,
-                        phoneChooseString, passwordChooseString,idCallString);
+                        phoneChooseString, passwordChooseString, idCallString);
 
                 break;
             case R.id.imageView8:
 
                 confirmPassword(phone3TextView, nameChooseString,
-                        phoneChooseString, passwordChooseString,idCallString);
+                        phoneChooseString, passwordChooseString, idCallString);
 
                 break;
             case R.id.imageView9:
 
                 confirmPassword(phone4TextView, nameChooseString,
-                        phoneChooseString, passwordChooseString,idCallString);
+                        phoneChooseString, passwordChooseString, idCallString);
 
                 break;
             case R.id.imageView10:
 
                 confirmPassword(phone5TextView, nameChooseString,
-                        phoneChooseString, passwordChooseString,idCallString);
+                        phoneChooseString, passwordChooseString, idCallString);
 
                 break;
 
@@ -218,7 +271,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
         }   // switch
-
 
 
     }   // onClick
@@ -402,11 +454,11 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
         if (checkAddPhone()) {
             MyAlert myAlert = new MyAlert();
-            myAlert.myDialog(SettingActivity.this,"ยังไม่ได้เลือกเบอร์โทรศัพท์",
+            myAlert.myDialog(SettingActivity.this, "ยังไม่ได้เลือกเบอร์โทรศัพท์",
                     "กรุณาเลือกเบอร์โทรศัพท์");
         } else if (checkRadio()) {
             MyAlert myAlert = new MyAlert();
-            myAlert.myDialog(SettingActivity.this,"ยังไม่ได้เลือกเบอร์โทรศัพท์โทรออก",
+            myAlert.myDialog(SettingActivity.this, "ยังไม่ได้เลือกเบอร์โทรศัพท์โทรออก",
                     "กรุณาเลือกเบอร์โทรศัพท์โทรออก");
         } else {
             addPhoneToSQLite();
@@ -449,7 +501,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         sqLiteDatabase.delete(MyManage.table_phone, null, null);
 
         MyManage myManage = new MyManage(SettingActivity.this);
-        for (int i=0;i<idCallStringsArrayList.size();i++) {
+        for (int i = 0; i < idCallStringsArrayList.size(); i++) {
 
             myManage.addPhoneToSQLite(idCallStringsArrayList.get(i),
                     myPhoneStringArrayList.get(i),
@@ -465,10 +517,10 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private boolean checkRadio() {
 
         boolean result = true; //noncheck
-        if (phone1RadioButton.isChecked()||
-                phone2RadioButton.isChecked()||
-                phone3RadioButton.isChecked()||
-                phone4RadioButton.isChecked()||
+        if (phone1RadioButton.isChecked() ||
+                phone2RadioButton.isChecked() ||
+                phone3RadioButton.isChecked() ||
+                phone4RadioButton.isChecked() ||
                 phone5RadioButton.isChecked()) {
             result = false;
         }
