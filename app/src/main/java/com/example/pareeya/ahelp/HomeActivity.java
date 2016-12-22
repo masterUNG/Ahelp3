@@ -11,6 +11,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimationDrawable;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -37,11 +41,22 @@ public class HomeActivity extends AppCompatActivity {
     private String truePasswordString, userPasswordString,
             idUserString, nameString, idCallString;
     private boolean statusABoolean = true;
+    private LocationManager locationManager;
+    private Criteria criteria;
+    private double lagADouble = 13.859882, lngADouble=100.481604;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        //setting ขออนุญาติใช้ server
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
 
         // image animation
         // Load the ImageView that will host the animation and
@@ -70,6 +85,74 @@ public class HomeActivity extends AppCompatActivity {
 
     }   // Main Method
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Location networkLocation = myFindLocation(LocationManager.NETWORK_PROVIDER);
+        if (networkLocation != null) {
+            lagADouble = networkLocation.getLatitude();
+            lngADouble = networkLocation.getLongitude();
+
+        }
+
+        Location gpsLocation = myFindLocation(LocationManager.GPS_PROVIDER);
+        if (gpsLocation != null) {
+            lagADouble = gpsLocation.getLatitude();
+            lngADouble = gpsLocation.getLongitude();
+        }
+        Log.d("22decV3", "lat==>" + lagADouble);
+        Log.d("22decV3", "lng==>" + lngADouble);
+    }//onResume
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        locationManager.removeUpdates(locationListener);
+
+    }
+
+    public Location myFindLocation(String strProvider) {
+
+        Location location = null;
+        if (locationManager.isProviderEnabled(strProvider)) {
+
+            locationManager.requestLocationUpdates(strProvider,1000,10,locationListener);//การค้นหาพิกัดทุกๆ1วินาที,ถ้ามีการเปลี่ยนพิกัด10เมตร ให้ทำการค้นหา
+
+
+        }
+
+        return location;
+    }
+
+    //location อัตโนมัติ
+
+    public LocationListener locationListener= new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+
+            lagADouble = location.getLatitude();
+            lngADouble = location.getLongitude();
+
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+    };
+
     private void findIDuser() {
         //Find idUser
         try {
@@ -89,7 +172,7 @@ public class HomeActivity extends AppCompatActivity {
                     nameString, truePasswordString);
             findIDuser.execute();
             String strJSON = findIDuser.get();
-            Log.d("8decV3", "JSoN ==> " + strJSON);
+            Log.d("8decV3", "JSON ==> " + strJSON);
 
             JSONArray jsonArray = new JSONArray(strJSON);
             JSONObject jsonObject = jsonArray.getJSONObject(0);
@@ -154,6 +237,7 @@ public class HomeActivity extends AppCompatActivity {
 
         Log.d("8decV4", "Noti OK");
         Intent intent = new Intent(HomeActivity.this, ShowNotification.class);
+        intent.putExtra("idUser", idUserString);
         PendingIntent pendingIntent = PendingIntent.getActivity(HomeActivity.this,
                 (int) System.currentTimeMillis(), intent,0);
         Uri uri = RingtoneManager.getDefaultUri(Notification.DEFAULT_SOUND);
@@ -266,23 +350,32 @@ public class HomeActivity extends AppCompatActivity {
 
             SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(MyOpenHelper.database_name,
                     MODE_PRIVATE, null);
-            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM phoneTABLE WHERE Action = '1'", null);
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM phoneTABLE", null);
             cursor.moveToFirst();
+
+            for (int i=0;i<cursor.getCount();i++) {
+
+                String strAHeip = idUserString;
+                String idUser = cursor.getString(cursor.getColumnIndex(MyManage.column_idCall));
+
+                editAhelp(idUser,strAHeip);
+
+                cursor.moveToNext();
+            }//for
             idCallString = cursor.getString(cursor.getColumnIndex(MyManage.column_idCall));
             Log.d("8decV2", "idCall ==> " + idCallString);
 
-            //Edit AHelp
-            editAhelp();
 
         } catch (Exception e) {
             Log.d("8decV2", "e find idCall ==> " + e.toString());
         }
     }
 
-    private void editAhelp() {
+    private void editAhelp(String idUser, String strAHelp) {
+
         try {
 
-            EditAhelp editAhelp = new EditAhelp(HomeActivity.this, idCallString, idUserString);
+            EditAhelp editAhelp = new EditAhelp(HomeActivity.this, idUser, strAHelp);
             editAhelp.execute();
 
             if (Boolean.parseBoolean(editAhelp.get())) {
@@ -301,23 +394,16 @@ public class HomeActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent CallIntent = new Intent(Intent.ACTION_CALL);
                 CallIntent.setData(Uri.parse("tel:=1669"));
-                if (ActivityCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
                 startActivity(CallIntent);
 
-            }
+                }//onClick
+
+
         });
-    }
+    }//call1669
 
     public void clickHomeGoSetting(View view) {
 
