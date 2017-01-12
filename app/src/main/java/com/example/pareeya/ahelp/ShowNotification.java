@@ -28,7 +28,7 @@ public class ShowNotification extends AppCompatActivity {
         } catch (Exception e) {
             Log.d("22decV2", "e Thread ==>" + e.toString());
 
-        }
+        }   // try
 
     }//Main Method
 

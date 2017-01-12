@@ -232,7 +232,7 @@ public class HomeActivity extends AppCompatActivity {
         statusABoolean = false;
 
         Log.d("8decV4", "Noti OK");
-        Intent intent = new Intent(HomeActivity.this, ShowNotification.class);
+        Intent intent = new Intent(HomeActivity.this, NotificationMaps.class);
         intent.putExtra("idUser", idUserString);
         PendingIntent pendingIntent = PendingIntent.getActivity(HomeActivity.this,
                 (int) System.currentTimeMillis(), intent,0);
@@ -263,10 +263,19 @@ public class HomeActivity extends AppCompatActivity {
 
                 confirmPassword();
 
+                findPhoneNumberFriend();
+
             }   // onClick
         });
 
     }
+
+    private void findPhoneNumberFriend() {
+
+
+
+
+    }   // findPhone
 
     private void confirmPassword() {
 
