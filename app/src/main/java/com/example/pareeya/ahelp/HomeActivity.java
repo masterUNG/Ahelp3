@@ -1,13 +1,11 @@
 package com.example.pareeya.ahelp;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimationDrawable;
@@ -15,12 +13,10 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -258,6 +254,7 @@ public class HomeActivity extends AppCompatActivity {
 
     }//noti
 
+    // คลิก ปุ่มมีภัย เพื่อเรียกเพื่อน
     private void imgController() {
 
         img.setOnClickListener(new View.OnClickListener() {
@@ -321,6 +318,7 @@ public class HomeActivity extends AppCompatActivity {
         //Find idUser
         try {
 
+            //หาข้อมูลของ คนที่กำลัง Login อยู่ โดยต้องการ id ของ User ที่ Login ==> idUserString
             FindIDuser findIDuser = new FindIDuser(HomeActivity.this,
                     nameString, truePasswordString);
             findIDuser.execute();
@@ -355,8 +353,14 @@ public class HomeActivity extends AppCompatActivity {
 
             for (int i=0;i<cursor.getCount();i++) {
 
-                String strAHeip = idUserString;
+                String strAHeip = idUserString; // หมายถึง id ของ user ที่กดเรียกเพื่อน
+                // หมายถึง id ของเพื่อนที่ บันทึกไว้ใน phoneTABLE
                 String idUser = cursor.getString(cursor.getColumnIndex(MyManage.column_idCall));
+
+                //ในแต่ละรอบจะส่ง id ของคนกดเรียกเพื่อน และ เพื่อนไป editAhelp
+
+                Log.d("12janV1", "my Location Lat ==> " + lagADouble);
+                Log.d("12janV1", "my Location Lng ==> " + lngADouble);
 
                 editAhelp(idUser,strAHeip);
 
@@ -375,8 +379,9 @@ public class HomeActivity extends AppCompatActivity {
 
         try {
 
-            EditAhelp editAhelp = new EditAhelp(HomeActivity.this, idUser, strAHelp);
-            editAhelp.execute();
+            EditAhelp editAhelp = new EditAhelp(HomeActivity.this,
+                    idUser, strAHelp, Double.toString(lagADouble), Double.toString(lngADouble));
+            editAhelp.execute("http://swiftcodingthai.com/fai/edit_Ahelp_where_id.php");
 
             if (Boolean.parseBoolean(editAhelp.get())) {
                 Toast.makeText(HomeActivity.this, "ส่งข้อความเรียบร้อยแล้ว", Toast.LENGTH_SHORT).show();

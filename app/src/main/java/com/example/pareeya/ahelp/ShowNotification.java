@@ -20,8 +20,9 @@ public class ShowNotification extends AppCompatActivity {
 
         //Edit Ahelp
         try {
-            EditAhelp editAhelp = new EditAhelp(ShowNotification.this, idUserString,"0");
-            editAhelp.execute();
+            EditAhelp editAhelp = new EditAhelp(ShowNotification.this,
+                    idUserString, "0", "0", "0");
+            editAhelp.execute("http://swiftcodingthai.com/fai/edit_Ahelp_where_id_only_aHelp.php");
             Log.d("22decV2", "Result  ==>" + editAhelp.get());
 
         } catch (Exception e) {
